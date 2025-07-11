@@ -1,4 +1,4 @@
-export class EnterNumber {
+export class EnterNumberOperation {
   constructor(enteredNumber) {
     this.enteredNumber = enteredNumber;
   }
@@ -8,6 +8,15 @@ export class EnterNumber {
       return previousValue;
     }
     return previousValue.toString() + this.enteredNumber.toString();
+  }
+}
+
+export class ChangeSignOperation {
+  execute(currentOperand) {
+    if (currentOperand === "") {
+      return currentOperand;
+    }
+    return parseFloat(currentOperand) * -1;
   }
 }
 

@@ -1,6 +1,7 @@
 import {
+  ChangeSignOperation,
   DivideOperation,
-  EnterNumber,
+  EnterNumberOperation,
   MinusOperation,
   MultipleOperation,
   PercentOperation,
@@ -21,14 +22,14 @@ export default class Calculator {
   }
 
   appendNumber(number) {
-    this.executeOperation(new EnterNumber(number), this.currentOperand);
+    this.executeOperation(
+      new EnterNumberOperation(number),
+      this.currentOperand
+    );
   }
 
   appendSign() {
-    if (this.currentOperand === "") {
-      return;
-    }
-    this.currentOperand = parseFloat(this.currentOperand) * -1;
+    this.executeOperation(new ChangeSignOperation(), this.currentOperand);
   }
 
   chooseOperation(operation) {
