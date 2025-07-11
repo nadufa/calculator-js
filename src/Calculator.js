@@ -1,3 +1,11 @@
+import {
+  DivideOperation,
+  MinusOperation,
+  MultipleOperation,
+  PercentOperation,
+  PlusOperation,
+} from "./operations";
+
 export default class Calculator {
   constructor(previousOperandTextElement, currentOperandTextElement) {
     this.previousOperandTextElement = previousOperandTextElement;
@@ -6,38 +14,44 @@ export default class Calculator {
   }
 
   clear() {
-    this.currentOperand = '';
-    this.previousOperand = '';
+    this.currentOperand = "";
+    this.previousOperand = "";
     this.operation = undefined;
   }
+
   appendNumber(number) {
-    if (number === '.' && this.currentOperand.includes('.')) {
+    if (number === "." && this.currentOperand.includes(".")) {
       return;
     }
     this.currentOperand = this.currentOperand.toString() + number.toString();
   }
 
   appendSign() {
-    if (this.currentOperand === '') {
+    if (this.currentOperand === "") {
       return;
     }
     this.currentOperand = parseFloat(this.currentOperand) * -1;
   }
 
   chooseOperation(operation) {
-    if (this.currentOperand === '') {
+    if (this.currentOperand === "") {
       return;
     }
-    if (this.previousOperand !== '') {
+    if (this.previousOperand !== "") {
       this.compute();
     }
     this.operation = operation;
     this.previousOperand = this.currentOperand;
-    this.currentOperand = '';
+    this.currentOperand = "";
+  }
+
+  executeOperation(operation) {
+    this.currentOperand = operation
+      .execute(parseFloat(this.previousOperand))
+      .toString();
   }
 
   compute() {
-    let computation;
     const prev = parseFloat(this.previousOperand);
     const current = parseFloat(this.currentOperand);
 
@@ -46,40 +60,39 @@ export default class Calculator {
     }
 
     switch (this.operation) {
-      case '+':
-        computation = prev + current;
+      case "+":
+        this.executeOperation(new PlusOperation(current));
         break;
-      case '-':
-        computation = prev - current;
+      case "-":
+        this.executeOperation(new MinusOperation(current));
         break;
-      case '/':
-        computation = prev / current;
+      case "*":
+        this.executeOperation(new MultipleOperation(current));
         break;
-      case '*':
-        computation = prev * current;
+      case "/":
+        this.executeOperation(new DivideOperation(current));
         break;
-      case '%':
-        computation = prev * current / 100;
+      case "%":
+        this.executeOperation(new PercentOperation(current));
         break;
       default:
         return;
     }
 
-    this.currentOperand = computation;
     this.operation = undefined;
-    this.previousOperand = '';
+    this.previousOperand = "";
   }
 
   getDisplayNumber(number) {
     const stringNumber = number.toString();
-    const integerDigits = parseFloat(stringNumber.split('.')[0]);
-    const decimalDigits = stringNumber.split('.')[1];
+    const integerDigits = parseFloat(stringNumber.split(".")[0]);
+    const decimalDigits = stringNumber.split(".")[1];
 
     let integerDisplay;
     if (isNaN(integerDigits)) {
-      integerDisplay = '';
+      integerDisplay = "";
     } else {
-      integerDisplay = integerDigits.toLocaleString('en', {
+      integerDisplay = integerDigits.toLocaleString("en", {
         maximumFractionDigits: 0,
       });
     }
@@ -100,7 +113,7 @@ export default class Calculator {
         this.previousOperand
       )} ${this.operation}`;
     } else {
-      this.previousOperandTextElement.innerText = '';
+      this.previousOperandTextElement.innerText = "";
     }
   }
 }

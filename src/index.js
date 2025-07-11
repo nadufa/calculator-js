@@ -1,54 +1,49 @@
-import Calculator from './Calculator.js';
+import Calculator from "./Calculator.js";
 
-import './styles.css';
+import "./styles.css";
 
-const numbers = document.querySelectorAll('[data-number]');
-const operations = document.querySelectorAll('[data-operation]');
-const equal = document.querySelector('[data-equals]');
-const clear = document.querySelector('[data-clear]');
-const sign = document.querySelector('[data-plusminus-sign]');
-const previousElement = document.querySelector(
-    '[data-previous-operand]'
-);
+const numbers = document.querySelectorAll("[data-number]");
+const operations = document.querySelectorAll("[data-operation]");
+const equal = document.querySelector("[data-equals]");
+const clear = document.querySelector("[data-clear]");
+const sign = document.querySelector("[data-plusminus-sign]");
+const previousElement = document.querySelector("[data-previous-operand]");
 const currentOperandTextElement = document.querySelector(
-    '[data-current-operand]'
+  "[data-current-operand]"
 );
-const toggleButton = document.querySelector('[data-theme-toggle]');
+const toggleButton = document.querySelector("[data-theme-toggle]");
 
-const calculator = new Calculator(
-    previousElement,
-    currentOperandTextElement
-);
+const calculator = new Calculator(previousElement, currentOperandTextElement);
 
 numbers.forEach((button) => {
-    button.addEventListener('click', () => {
-        calculator.appendNumber(button.innerText);
-        calculator.updateDisplay();
-    });
+  button.addEventListener("click", () => {
+    calculator.appendNumber(button.innerText);
+    calculator.updateDisplay();
+  });
 });
 
 operations.forEach((button) => {
-    button.addEventListener('click', () => {
-        calculator.chooseOperation(button.innerText);
-        calculator.updateDisplay();
-    });
-});
-
-equal.addEventListener('click', () => {
-    calculator.compute();
+  button.addEventListener("click", () => {
+    calculator.chooseOperation(button.innerText);
     calculator.updateDisplay();
+  });
 });
 
-sign.addEventListener('click', () => {
-    calculator.appendSign();
-    calculator.updateDisplay();
+equal.addEventListener("click", () => {
+  calculator.compute();
+  calculator.updateDisplay();
 });
 
-clear.addEventListener('click', () => {
-    calculator.clear();
-    calculator.updateDisplay();
+sign.addEventListener("click", () => {
+  calculator.appendSign();
+  calculator.updateDisplay();
 });
 
-toggleButton.addEventListener('click', () => {
-    document.body.classList.toggle('light-mode');
+clear.addEventListener("click", () => {
+  calculator.clear();
+  calculator.updateDisplay();
+});
+
+toggleButton.addEventListener("click", () => {
+  document.body.classList.toggle("light-mode");
 });
