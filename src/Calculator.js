@@ -1,5 +1,6 @@
 import {
   DivideOperation,
+  EnterNumber,
   MinusOperation,
   MultipleOperation,
   PercentOperation,
@@ -20,10 +21,7 @@ export default class Calculator {
   }
 
   appendNumber(number) {
-    if (number === "." && this.currentOperand.includes(".")) {
-      return;
-    }
-    this.currentOperand = this.currentOperand.toString() + number.toString();
+    this.executeOperation(new EnterNumber(number), this.currentOperand);
   }
 
   appendSign() {
@@ -45,10 +43,8 @@ export default class Calculator {
     this.currentOperand = "";
   }
 
-  executeOperation(operation) {
-    this.currentOperand = operation
-      .execute(parseFloat(this.previousOperand))
-      .toString();
+  executeOperation(operation, state) {
+    this.currentOperand = operation.execute(state).toString();
   }
 
   compute() {
@@ -61,19 +57,34 @@ export default class Calculator {
 
     switch (this.operation) {
       case "+":
-        this.executeOperation(new PlusOperation(current));
+        this.executeOperation(
+          new PlusOperation(current),
+          parseFloat(this.previousOperand)
+        );
         break;
       case "-":
-        this.executeOperation(new MinusOperation(current));
+        this.executeOperation(
+          new MinusOperation(current),
+          parseFloat(this.previousOperand)
+        );
         break;
       case "*":
-        this.executeOperation(new MultipleOperation(current));
+        this.executeOperation(
+          new MultipleOperation(current),
+          parseFloat(this.previousOperand)
+        );
         break;
       case "/":
-        this.executeOperation(new DivideOperation(current));
+        this.executeOperation(
+          new DivideOperation(current),
+          parseFloat(this.previousOperand)
+        );
         break;
       case "%":
-        this.executeOperation(new PercentOperation(current));
+        this.executeOperation(
+          new PercentOperation(current),
+          parseFloat(this.previousOperand)
+        );
         break;
       default:
         return;

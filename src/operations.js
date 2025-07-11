@@ -1,14 +1,13 @@
 export class EnterNumber {
-  constructor(currentAmount) {
-    this.currentAmount = currentAmount;
+  constructor(enteredNumber) {
+    this.enteredNumber = enteredNumber;
   }
 
-  execute(previousAmount) {
-    if (this.currentAmount === "." && previousAmount.includes(".")) {
-      return previousAmount;
+  execute(previousValue) {
+    if (this.enteredNumber === "." && previousValue.includes(".")) {
+      return previousValue;
     }
-    console.log(this.currentAmount, previousAmount);
-    return previousAmount.toString() + this.currentAmount.toString();
+    return previousValue.toString() + this.enteredNumber.toString();
   }
 }
 
