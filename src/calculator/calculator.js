@@ -2,29 +2,50 @@ import {
   ChangeSignOperation,
   DivideOperation,
   EnterNumberOperation,
+  FloatingPointOperation,
   MinusOperation,
   MultipleOperation,
   PercentOperation,
   PlusOperation,
-} from "./operations";
+  PowerOperation,
+  RootOperation,
+} from "./operations/math";
+
+import {
+  MemoryAddOperation,
+  MemoryClearOperation,
+  MemoryRecallOperation,
+  MemorySubtractOperation,
+} from "./operations/memory";
+
+import {
+  binaryOperations,
+  historyOperations,
+  memoryOperations,
+  operationsChars,
+  unaryOperations,
+} from "./const";
 
 export class Calculator {
   constructor() {
-    this.initState();
-  }
-
-  initState() {
+    this.history = [];
     this.state = {
       operation: null,
       leftOperand: "",
       rightOperand: "",
-      upperText: "",
-      bottomText: "",
+      output: "",
+      memory: "0",
+      historyIndex: 0,
     };
   }
 
-  clear() {
-    this.initState();
+  clearAll() {
+    this.state = {
+      ...this.state,
+      operation: null,
+      leftOperand: "",
+      rightOperand: "",
+    };
   }
 
   remove() {
@@ -32,43 +53,116 @@ export class Calculator {
       this.state.rightOperand = this.state.rightOperand.slice(0, -1);
     } else if (this.state.operation) {
       this.state.operation = null;
-      this.state.rightOperand = this.state.leftOperand;
-      this.state.leftOperand = "";
+    } else if (this.state.leftOperand) {
+      this.state.leftOperand = this.state.leftOperand.slice(0, -1);
     }
+  }
+
+  getMemoryOperation(operationValue) {
+    switch (operationValue) {
+      case memoryOperations.RECALL:
+        return new MemoryRecallOperation();
+      case memoryOperations.CLEAR:
+        return new MemoryClearOperation();
+      case memoryOperations.ADD:
+        return new MemoryAddOperation();
+      case memoryOperations.SUBTRACT:
+        return new MemorySubtractOperation();
+      default:
+        break;
+    }
+  }
+
+  doMemoryOperation(operationValue) {
+    let operation = this.getMemoryOperation(operationValue);
+    this.executeOperation(operation);
   }
 
   enterNumber(number) {
-    this.executeOperation(new EnterNumberOperation(), {
-      previousAmount: this.state.rightOperand,
-      currentAmount: number,
-    });
+    this.executeOperation(new EnterNumberOperation(), number);
   }
 
-  appendSign() {
-    this.executeOperation(new ChangeSignOperation(), {
-      currentAmount: this.state.rightOperand,
-    });
+  floatingPoint() {
+    this.executeOperation(new FloatingPointOperation());
   }
 
-  setOperation(operation) {
-    if (this.state.rightOperand === "") {
-      if (this.state.operation) {
-        this.state.operation = operation;
-      }
-      return;
+  getUnaryOperationData(operationValue) {
+    let operation, value;
+    switch (operationValue) {
+      case unaryOperations.NEGATE:
+        operation = new ChangeSignOperation();
+        value = "";
+        break;
+      case unaryOperations.SQUARE:
+        operation = new PowerOperation();
+        value = 2;
+        break;
+      case unaryOperations.CUBE:
+        operation = new PowerOperation();
+        value = 3;
+        break;
+      case unaryOperations.TEN_POWER_X:
+        operation = new PowerOperation();
+        value = 10;
+        break;
+      case unaryOperations.INVERSE:
+        operation = new PowerOperation();
+        value = -1;
+        break;
+      case unaryOperations.SQRT:
+        operation = new PowerOperation();
+        value = 1 / 2;
+        break;
+      case unaryOperations.CBRT:
+        operation = new PowerOperation();
+        value = 1 / 3;
+        break;
+      default:
+        return;
     }
 
-    if (this.state.leftOperand !== "") {
+    return {
+      operation,
+      value,
+    };
+  }
+
+  doUnaryOperation(operation) {
+    let operationData = this.getUnaryOperationData(operation);
+
+    this.executeOperation(operationData.operation, operationData.value);
+  }
+
+  getBinaryOperation(operationValue) {
+    switch (operationValue) {
+      case binaryOperations.PLUS:
+        return new PlusOperation(operationsChars.PLUS);
+      case binaryOperations.MINUS:
+        return new MinusOperation(operationsChars.MINUS);
+      case binaryOperations.MULTIPLY:
+        return new MultipleOperation(operationsChars.MULTIPLY);
+      case binaryOperations.DIVIDE:
+        return new DivideOperation(operationsChars.DIVIDE);
+      case binaryOperations.PERCENT:
+        return new PercentOperation(operationsChars.PERCENT);
+      case binaryOperations.POWER:
+        return new PowerOperation(operationsChars.POWER);
+      case binaryOperations.NTH_ROOT:
+        return new RootOperation(operationsChars.ROOT);
+      default:
+        return;
+    }
+  }
+
+  setBinaryOperation(operationValue) {
+    if (this.state.rightOperand !== "") {
       this.compute();
     }
-
-    this.state.leftOperand = this.state.rightOperand;
-    this.state.rightOperand = "";
-    this.state.operation = operation;
+    this.state.operation = this.getBinaryOperation(operationValue);
   }
 
-  executeOperation(operation, state) {
-    this.state.rightOperand = operation.execute(state).toString();
+  executeOperation(operation, value) {
+    this.state = operation.execute({ state: this.state, value: value });
   }
 
   compute() {
@@ -79,38 +173,36 @@ export class Calculator {
       return;
     }
 
-    let operation = null;
-    switch (this.state.operation) {
-      case "+":
-        operation = new PlusOperation();
-        break;
-      case "-":
-        operation = new MinusOperation();
-        break;
-      case "*":
-        operation = new MultipleOperation();
-        break;
-      case "/":
-        operation = new DivideOperation();
-        break;
-      case "%":
-        operation = new PercentOperation();
-        break;
-      default:
-        return;
-    }
+    this.history.push(Object.freeze({ ...this.state }));
+    this.state.historyIndex += 1;
+    console.log(this.state.historyIndex);
 
-    this.executeOperation(operation, {
-      previousAmount: left,
-      currentAmount: right,
-    });
+    this.executeOperation(this.state.operation);
 
     this.state.operation = null;
-    this.state.leftOperand = "";
   }
 
-  getDisplayNumber(number) {
-    const stringNumber = number.toString();
+  revisitHistory(operationValue) {
+    switch (operationValue) {
+      case historyOperations.FORWARD:
+        if (this.state.historyIndex < this.history.length - 1) {
+          this.state.historyIndex = this.state.historyIndex + 1;
+        }
+        break;
+      case historyOperations.BACKWARD:
+        if (this.state.historyIndex > 0) {
+          this.state.historyIndex = this.state.historyIndex - 1;
+        }
+        break;
+      default:
+        break;
+    }
+    this.state = { ...this.history[this.state.historyIndex] };
+    console.log(this.state);
+  }
+
+  getDisplayNumber(value) {
+    const stringNumber = value.toString();
     const integerDigits = parseFloat(stringNumber.split(".")[0]);
     const decimalDigits = stringNumber.split(".")[1];
 
@@ -130,13 +222,12 @@ export class Calculator {
     return `${integerDisplay}.${decimalDigits}`;
   }
 
-  updateState() {
-    this.state.bottomText = this.getDisplayNumber(this.state.rightOperand);
-    this.state.upperText =
-      this.state.operation == null
+  updateOutput() {
+    this.state.output =
+      this.getDisplayNumber(this.state.leftOperand || "") +
+      (this.state.operation == null
         ? ""
-        : `${this.getDisplayNumber(this.state.leftOperand)} ${
-            this.state.operation
-          }`;
+        : " " + this.state.operation.character + " ") +
+      this.getDisplayNumber(this.state.rightOperand || "");
   }
 }

@@ -1,18 +1,23 @@
 export class CalculatorUI {
   constructor() {
-    this.numbers = document.querySelectorAll("[data-number]");
-    this.operations = document.querySelectorAll("[data-operation]");
-    this.equal = document.querySelector("[data-equals]");
-    this.clear = document.querySelector("[data-clear]");
-    this.remove = document.querySelector("[data-remove]");
-    this.sign = document.querySelector("[data-plusminus-sign]");
-    this.previousOperand = document.querySelector("[data-previous-operand]");
-    this.currentOperand = document.querySelector("[data-current-operand]");
+    this.numbersButtons = document.querySelectorAll("[data-number]");
+    this.floatingPointButton = document.querySelector("[data-floating-point]");
+    this.unaryOperationsButtons = document.querySelectorAll(
+      "[data-operation-unary]"
+    );
+    this.binaryOperationsButtons = document.querySelectorAll(
+      "[data-operation-binary]"
+    );
+    this.memoryButtons = document.querySelectorAll("[data-memory]");
+    this.equalButton = document.querySelector("[data-equals]");
+    this.allClearButton = document.querySelector("[data-clear]");
+    this.removeButton = document.querySelector("[data-remove]");
+    this.inputField = document.querySelector("[data-input]");
     this.toggleButton = document.querySelector("[data-theme-toggle]");
+    this.historyButtons = document.querySelectorAll("[data-history]");
   }
 
-  update(previousOperandValue, currentOperandValue) {
-    this.previousOperand.innerText = previousOperandValue;
-    this.currentOperand.innerText = currentOperandValue;
+  update(value) {
+    this.inputField.innerText = value;
   }
 }

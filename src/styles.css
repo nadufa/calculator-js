@@ -65,7 +65,7 @@ body {
   background-color: var(--hover-color);
 }
 
-.output {
+.calc-input {
   grid-column: span 7;
   background-color: var(--output-background-color);
   border: 2px solid var(--output-border-color);
@@ -77,14 +77,6 @@ body {
   padding: 10px;
   word-wrap: break-word;
   word-break: break-all;
-}
-
-.output .previous-operand {
-  color: var(--output-text-color);
-  font-size: 1.5rem;
-}
-
-.output .current-operand {
   color: var(--output-text-color);
   font-size: 2.5rem;
 }

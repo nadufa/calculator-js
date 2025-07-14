@@ -9,43 +9,63 @@
 
   <body class="root">
     <div class="calc-grid">
-      <div class="output">
-        <div data-previous-operand class="previous-operand"></div>
-        <div data-current-operand class="current-operand"></div>
-      </div>
-      <button data-memory>MC</button>
-      <button data-operation>x^2</button>
-      <button data-remove><=</button>
+      <div data-input class="calc-input"></div>
+
+      <button data-memory="clear">MC</button>
+
+      <button data-operation-unary="square">x&sup2;</button>
+      <button data-remove>&lt;=</button>
       <button data-clear>AC</button>
-      <button data-plusminus-sign>+/-</button>
-      <button data-operation>%</button>
-      <button data-operation>/</button>
-      <button data-memory>M+</button>
-      <button data-operation>10^x</button>
-      <button data-operation>x^3</button>
+      <button data-operation-unary="negate">+/-</button>
+      <button data-operation-binary="percent">%</button>
+      <button data-operation-binary="divide">/</button>
+
+      <button data-memory="add">M+</button>
+
+      <button data-operation-unary="tenPowerX">
+        <var>10<sup>x</sup></var>
+      </button>
+
+      <button data-operation-unary="cube">x&sup3;</button>
+
       <button data-number>7</button>
       <button data-number>8</button>
       <button data-number>9</button>
-      <button data-operation>*</button>
-      <button data-memory>M-</button>
-      <button data-operation>1/x</button>
-      <button data-operation>x^y</button>
+      <button data-operation-binary="multiply">*</button>
+
+      <button data-memory="subtract">M-</button>
+
+      <button data-operation-unary="inverse">1/x</button>
+
+      <button data-operation-binary="power">
+        <var>x<sup>y</sup></var>
+      </button>
+
       <button data-number>4</button>
       <button data-number>5</button>
       <button data-number>6</button>
-      <button data-operation>-</button>
-      <button data-memory>MR</button>
-      <button data-operation>sqrt</button>
-      <button data-operation>sqrtx</button>
+      <button data-operation-binary="minus">-</button>
+
+      <button data-memory="recall">MR</button>
+
+      <button data-operation-unary="sqrt">&radic;x</button>
+
+      <button data-operation-binary="nthRoot">
+        <var><sup>x</sup>&radic;y</var>
+      </button>
+
       <button data-number>1</button>
       <button data-number>2</button>
       <button data-number>3</button>
-      <button data-operation>+</button>
-      <button data-special>e</button>
-      <button data-special>pi</button>
-      <button data-operation>sqrt3</button>
+      <button data-operation-binary="plus">+</button>
+
+      <button data-history="backward">&lt;&lt;</button>
+      <button data-history="forward">&gt;&gt;</button>
+
+      <button data-operation-unary="cbrt">&#x221B;x</button>
+
       <button data-number>0</button>
-      <button data-number>.</button>
+      <button data-floating-point>.</button>
       <button data-equals>=</button>
 
       <button data-theme-toggle>TH</button>

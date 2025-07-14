@@ -6,50 +6,69 @@ export class CalculatorControler {
   }
 
   render() {
-    this.calculator.updateState();
-    this.ui.update(
-      this.calculator.state.upperText,
-      this.calculator.state.bottomText
-    );
+    this.calculator.updateOutput();
+
+    this.ui.update(this.calculator.state.output);
   }
 
   registerListeners() {
-    this.ui.numbers.forEach((button) => {
+    this.ui.numbersButtons.forEach((button) => {
       button.addEventListener("click", () => {
         this.calculator.enterNumber(button.innerText);
         this.render();
       });
     });
 
-    this.ui.operations.forEach((button) => {
+    this.ui.floatingPointButton.addEventListener("click", () => {
+      this.calculator.floatingPoint();
+      this.render();
+    });
+
+    this.ui.unaryOperationsButtons.forEach((button) => {
       button.addEventListener("click", () => {
-        this.calculator.setOperation(button.innerText);
+        this.calculator.doUnaryOperation(button.dataset.operationUnary);
         this.render();
       });
     });
 
-    this.ui.equal.addEventListener("click", () => {
+    this.ui.binaryOperationsButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        this.calculator.setBinaryOperation(button.dataset.operationBinary);
+        this.render();
+      });
+    });
+
+    this.ui.memoryButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        this.calculator.doMemoryOperation(button.dataset.memory);
+        this.render();
+      });
+    });
+
+    this.ui.equalButton.addEventListener("click", () => {
       this.calculator.compute();
       this.render();
     });
 
-    this.ui.sign.addEventListener("click", () => {
-      this.calculator.appendSign();
+    this.ui.allClearButton.addEventListener("click", () => {
+      this.calculator.clearAll();
       this.render();
     });
 
-    this.ui.clear.addEventListener("click", () => {
-      this.calculator.clear();
-      this.render();
-    });
-
-    this.ui.remove.addEventListener("click", () => {
+    this.ui.removeButton.addEventListener("click", () => {
       this.calculator.remove();
       this.render();
     });
 
     this.ui.toggleButton.addEventListener("click", () => {
       document.body.classList.toggle("light-mode");
+    });
+
+    this.ui.historyButtons.forEach((button) => {
+      button.addEventListener("click", () => {
+        this.calculator.revisitHistory(button.dataset.history);
+        this.render();
+      });
     });
   }
 }
