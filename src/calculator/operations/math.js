@@ -1,3 +1,4 @@
+import { DivisionByZeroError } from "../errors.js";
 import { abs, getOperandKey, round } from "../utils.js";
 import { Operation } from "./base.js";
 
@@ -180,7 +181,7 @@ export class DivideOperation extends Operation {
 
   calculate(left, right) {
     if (right === 0) {
-      throw new Error("DivisionByZeroError");
+      throw new DivisionByZeroError();
     }
     return left / right;
   }

@@ -27,6 +27,7 @@ import {
   operationsChars,
   unaryOperations,
 } from "./const";
+import { DivisionByZeroError } from "./errors";
 
 export class Calculator {
   constructor() {
@@ -39,7 +40,7 @@ export class Calculator {
       rightOperand: "",
       output: "",
       memory: "0",
-      error: "",
+      error: null,
     });
     this.undoStack.push(this.state);
   }
@@ -50,7 +51,7 @@ export class Calculator {
       reversedInput: false,
       leftOperand: "0",
       rightOperand: "",
-      error: "",
+      error: null,
     });
   }
 
@@ -63,6 +64,7 @@ export class Calculator {
       const mutatedValue = this.state.leftOperand.slice(0, -1) || "0";
       this.mutateState({ leftOperand: mutatedValue });
     }
+    this.remember();
   }
 
   getMemoryOperation(operationValue) {
@@ -90,6 +92,8 @@ export class Calculator {
   }
 
   floatingPoint() {
+    console.log("fp");
+
     this.executeOperation(new FloatingPointOperation());
   }
 
@@ -208,13 +212,23 @@ export class Calculator {
   }
 
   executeOperation(operation, value) {
+    this.mutateState({ error: null });
     try {
       const newState = operation.execute({ state: this.state, value: value });
       this.mutateState(newState);
       this.remember();
       this.redoStack = [];
     } catch (e) {
-      this.mutateState({ error: e.message });
+      if (e instanceof DivisionByZeroError) {
+        this.mutateState({
+          error: e.name,
+          leftOperand: "",
+          rightOperand: "",
+          operation: "",
+        });
+      } else {
+        console.error(e.message);
+      }
     }
   }
 
@@ -250,37 +264,24 @@ export class Calculator {
   }
 
   formatOutputValue(value) {
-    const stringNumber = value.toString();
-    const [integerPart, decimalPart] = stringNumber.split(".");
+    const [integerPart, decimalPart] = value.split(".");
 
-    // Add thousand separators to integer part manually
     const integerDisplay = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-    return decimalPart ? `${integerDisplay}.${decimalPart}` : integerDisplay;
+    return `${integerDisplay}${value.includes(".") ? "." : ""}${
+      decimalPart || ""
+    }`;
   }
 
   getOutput() {
-    if (this.state.error) {
-      return this.state.error;
-    }
-
-    const leftOperand =
-      parseFloat(this.state.leftOperand) < 0
-        ? String(-this.state.leftOperand) + "-"
-        : this.state.leftOperand;
-
-    const rightOperand =
-      parseFloat(this.state.rightOperand) < 0
-        ? String(-this.state.rightOperand) + "-"
-        : this.state.rightOperand;
-
-    // reverse operand order because of css "direction: rtl" property
-    return (
-      this.formatOutputValue(rightOperand || "") +
-      (this.state.operation == null
-        ? ""
-        : " " + this.state.operation.character + " ") +
-      this.formatOutputValue(leftOperand || "")
-    );
+    return {
+      text:
+        this.formatOutputValue(this.state.leftOperand || "") +
+        (this.state.operation == null
+          ? ""
+          : " " + this.state.operation.character + " ") +
+        this.formatOutputValue(this.state.rightOperand || ""),
+      error: this.state.error,
+    };
   }
 }

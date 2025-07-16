@@ -17,12 +17,20 @@ export class CalculatorUI {
     this.toggleButton = document.querySelector("[data-theme-toggle]");
     this.factorialButton = document.querySelector("[data-factorial]");
     this.historyButtons = document.querySelectorAll("[data-history]");
-    this.burgerButton = document.querySelector(".burger-button");
     this.themePanel = document.querySelector(".theme-panel");
   }
 
   render(data) {
+    console.log(data);
+
     this.outputMemoryField.innerText = "Memory: " + data.memoryOutput;
-    this.outputField.innerText = data.output;
+    if (data.output.error) {
+      this.outputField.innerText = data.output.error;
+      this.outputField.classList.add("error-color");
+    } else {
+      this.outputField.classList.remove("error-color");
+      // use LTR embedding character to keep "direction: rtl" css property and display all neutral characters correctly
+      this.outputField.innerText = "\u202A" + data.output.text;
+    }
   }
 }

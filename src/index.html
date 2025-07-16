@@ -13,7 +13,6 @@
 <body class="root">
   <div class="app">
     <div class="theme-panel">
-      <button class="burger-button" aria-label="Toggle menu">&#9776;</button>
       <button data-theme-toggle class="themeButton">TH</button>
     </div>
     <div class="calc">
@@ -25,49 +24,49 @@
         </div>
 
         <!-- Row 1 -->
-        <button data-memory="clear" class="memory-button">MC</button>
-        <button data-operation-unary="tenPowerX"><var>10<sup>x</sup></var></button>
-        <button data-operation-unary="inverse">1/x</button>
-        <button data-operation-unary="factorial">!</button>
-        <button data-operation-unary="negate">+/-</button>
-        <button data-operation-binary="percent">%</button>
-        <button data-operation-binary="divide" class="primary-operation-button">/</button>
+        <button data-memory="clear" class="unselectable memory-button">MC</button>
+        <button data-operation-unary="tenPowerX" class="unselectable power-operation-button"><var>10<sup>x</sup></var></button>
+        <button data-operation-unary="inverse" class="unselectable power-operation-button">1/x</button>
+        <button data-operation-unary="factorial" class="unselectable primary-operation-button">!</button>
+        <button data-operation-unary="negate" class="unselectable primary-operation-button">+/-</button>
+        <button data-operation-binary="percent" class="unselectable primary-operation-button">%</button>
+        <button data-operation-binary="divide" class="unselectable primary-operation-button">/</button>
 
         <!-- Row 2 -->
-        <button data-memory="add" class="memory-button">M+</button>
-        <button data-operation-unary="square">x&sup2;</button>
-        <button data-operation-unary="sqrt">&radic;x</button>
-        <button data-number class="number-button">7</button>
-        <button data-number class="number-button">8</button>
-        <button data-number class="number-button">9</button>
-        <button data-operation-binary="multiply" class="primary-operation-button">*</button>
+        <button data-memory="add" class="unselectable memory-button">M+</button>
+        <button data-operation-unary="square" class="unselectable power-operation-button">x&sup2;</button>
+        <button data-operation-unary="sqrt" class="unselectable power-operation-button">&radic;x</button>
+        <button data-number class="unselectable number-button">7</button>
+        <button data-number class="unselectable number-button">8</button>
+        <button data-number class="unselectable number-button">9</button>
+        <button data-operation-binary="multiply" class="unselectable primary-operation-button">*</button>
 
         <!-- Row 3 -->
-        <button data-memory="subtract" class="memory-button">M-</button>
-        <button data-operation-unary="cube">x&sup3;</button>
-        <button data-operation-unary="cbrt">&#x221B;x</button>
-        <button data-number class="number-button">4</button>
-        <button data-number class="number-button">5</button>
-        <button data-number class="number-button">6</button>
-        <button data-operation-binary="minus" class="primary-operation-button">-</button>
+        <button data-memory="subtract" class="unselectable memory-button">M-</button>
+        <button data-operation-unary="cube" class="unselectable power-operation-button">x&sup3;</button>
+        <button data-operation-unary="cbrt" class="unselectable power-operation-button">&#x221B;x</button>
+        <button data-number class="unselectable number-button">4</button>
+        <button data-number class="unselectable number-button">5</button>
+        <button data-number class="unselectable number-button">6</button>
+        <button data-operation-binary="minus" class="unselectable primary-operation-button">-</button>
 
         <!-- Row 4 -->
-        <button data-memory="recall" class="memory-button">MR</button>
-        <button data-operation-binary="power"><var>x<sup>y</sup></var></button>
-        <button data-operation-binary="nthRoot"><var><sup>x</sup>&radic;y</var></button>
-        <button data-number class="number-button">1</button>
-        <button data-number class="number-button">2</button>
-        <button data-number class="number-button">3</button>
-        <button data-operation-binary="plus" class="primary-operation-button">+</button>
+        <button data-memory="recall" class="unselectable memory-button">MR</button>
+        <button data-operation-binary="power" class="unselectable power-operation-button"><var>x<sup>y</sup></var></button>
+        <button data-operation-binary="nthRoot" class="unselectable power-operation-button"><var><sup>x</sup>&radic;y</var></button>
+        <button data-number class="unselectable number-button">1</button>
+        <button data-number class="unselectable number-button">2</button>
+        <button data-number class="unselectable number-button">3</button>
+        <button data-operation-binary="plus" class="unselectable primary-operation-button">+</button>
 
         <!-- Row 5 -->
-        <button data-history="backward" class="history-button">&lt;&lt;</button>
-        <button data-history="forward" class="history-button">&gt;&gt;</button>
-        <button data-remove class="clear-button">&lt;=</button>
-        <button data-clear class="clear-button">AC</button>
-        <button data-number class="number-button">0</button>
-        <button data-floating-point class="number-button">.</button>
-        <button data-equals class="primary-operation-button">=</button>
+        <button data-history="backward" class="unselectable history-button">&lt;&lt;</button>
+        <button data-history="forward" class="unselectable history-button">&gt;&gt;</button>
+        <button data-remove class="unselectable clear-button">&lt;=</button>
+        <button data-clear class="unselectable clear-button">AC</button>
+        <button data-number class="unselectable number-button">0</button>
+        <button data-floating-point class="unselectable number-button">.</button>
+        <button data-equals class="unselectable primary-operation-button">=</button>
       </div>
     </div>
   </div>

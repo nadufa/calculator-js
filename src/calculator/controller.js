@@ -73,9 +73,5 @@ export class CalculatorControler {
         this.update();
       });
     });
-
-    this.ui.burgerButton.addEventListener("click", () => {
-      this.ui.themePanel.classList.toggle("open");
-    });
   }
 }

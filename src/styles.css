@@ -1,4 +1,4 @@
-:root {
+/* :root {
   --background-color: #101726;
   --text-color: #ffffff;
   --button-color: #1b0925;
@@ -14,24 +14,56 @@
   --output-border-color: #ffffff;
   --output-text-color: rgba(255, 255, 255, 0.75);
   --theme-panel-background-color: rgba(255, 255, 255, 0.11);
+} */
+
+:root {
+  --background-color: #0f0f1b;
+  --text-color: #f5f5f5;
+  --button-color: #1e1e2e;
+  --number-button-color: #393053;
+  --primary-operation-color: #f0845f;
+  --memory-button-color: #5edfff;
+  --history-button-color: #c084fc;
+  --clear-button-color: #ff5e5b;
+  --button-border-color: #ffffff;
+  --border-hover-color: #ffffff;
+  --hover-color: rgba(255, 255, 255, 0.08);
+  --active-color: rgba(255, 255, 255, 0.18);
+  --output-background-color: #1e1e2e;
+  --output-border-color: #888;
+  --output-text-color: #ffffffcc;
+  --theme-panel-background-color: #1e1e2e;
+  --number-button-brightness: 2;
+  --primary-operation-brightness: 1.2;
+  --memory-button-brightness: 1.1;
+  --history-button-brightness: 1.2;
+  --clear-button-brightness: 1.2;
+  --power-operation-button-brightness: 2;
 }
 
 .light-mode {
-  --background-color: #f9efff;
-  --text-color: #000000;
-  --button-color: #fffaeb;
-  --number-button-color: #d9dddc;
-  --primary-operation-color: #ffa500;
-  --memory-button-color: #3bb143;
-  --history-button-color: #00b4d8;
-  --clear-button-color: #d2042d;
+  --background-color: #fafafa;
+  --text-color: #333333;
+  --button-color: #ffffff;
+  --number-button-color: #dbeafe;
+  --primary-operation-color: #facc15;
+  --memory-button-color: #86efac;
+  --history-button-color: #a5b4fc;
+  --clear-button-color: #f87171;
   --button-border-color: #000000;
-  --hover-color: rgba(0, 0, 0, 0.125);
-  --active-color: rgba(0, 0, 0, 0.3);
-  --output-background-color: #ecf0ff;
+  --border-hover-color: #999999;
+  --hover-color: rgba(10, 10, 10, 0.2);
+  --active-color: rgba(0, 0, 0, 0.12);
+  --output-background-color: #f3f4f6;
   --output-border-color: #000000;
   --output-text-color: rgba(0, 0, 0, 0.75);
-  --theme-panel-background-color: #ecf0ff;
+  --theme-panel-background-color: #e5e7eb;
+  --number-button-brightness: 1.2;
+  --primary-operation-brightness: 1.2;
+  --memory-button-brightness: 1.1;
+  --history-button-brightness: 1.2;
+  --clear-button-brightness: 1.2;
+  --power-operation-button-brightness: 2;
 }
 
 *,
@@ -56,11 +88,6 @@ body {
   flex-direction: row;
   /* justify-content: space-between; */
   height: 100vh;
-}
-
-.theme-panel {
-  width: 300px;
-  background-color: var(--theme-panel-background-color);
 }
 
 .calc {
@@ -96,14 +123,46 @@ body {
   padding: 15px;
 }
 
+.calc-grid button:hover,
+.themeButton:hover {
+  background-color: var(--hover-color);
+  border-color: var(--border-hover-color);
+}
+
+/* Optional: stronger hover for specific button types */
+.calc-grid button.primary-operation-button:hover {
+  filter: brightness(var(--primary-operation-brightness));
+}
+
+.calc-grid button.memory-button:hover {
+  filter: brightness(var(--memory-button-brightness));
+}
+
+.calc-grid button.number-button:hover {
+  filter: brightness(var(--number-button-brightness));
+}
+
+.calc-grid button.history-button:hover {
+  filter: brightness(var(--history-button-brightness));
+}
+
+.calc-grid button.clear-button:hover {
+  filter: brightness(var(--clear-button-brightness));
+}
+
+.calc-grid button.power-operation-button:hover {
+  filter: brightness(var(--power-operation-button-brightness));
+}
+
 .calc-grid > button:hover,
 .themeButton:hover {
   background-color: var(--hover-color);
+  border: 2px solid var(--border-hover-color);
 }
 
-.calc-grid > button:active,
+.calc-grid button:active,
 .themeButton:active {
-  background-color: var(--active-color) red;
+  background-color: var(--active-color);
 }
 
 .themeButton {
@@ -115,14 +174,8 @@ body {
   font-size: 2rem;
 }
 
-.burger-button {
-  display: none;
-  font-size: 2.5rem;
-  background: none;
-  border: none;
-  color: var(--text-color);
-  cursor: pointer;
-  padding: 5px 15px;
+.unselectable {
+  user-select: none;
 }
 
 .calc-grid > button.primary-operation-button {
@@ -160,6 +213,10 @@ body {
   overflow: hidden;
 }
 
+.output > .calc-output.error-color {
+  color: red;
+}
+
 .output > .calc-output-memory {
   color: var(--output-text-color);
   font-size: 1.2rem;
@@ -189,36 +246,6 @@ body {
 @media (max-width: 1020px) {
   .app {
     flex-direction: column;
-  }
-
-  .theme-panel {
-    position: fixed;
-    top: 0;
-    right: 0;
-    bottom: 0;
-    width: 250px;
-    background-color: var(--theme-panel-background-color);
-    transform: translateX(100%);
-    z-index: 1000;
-    overflow-y: auto;
-  }
-
-  .theme-panel.open {
-    transform: translateX(0);
-    visibility: visible;
-  }
-
-  .burger-button {
-    position: fixed;
-    top: 10px;
-    left: 10px;
-    z-index: 1500;
-    display: block;
-    background: none;
-    border: none;
-    font-size: 2.5rem;
-    color: var(--text-color);
-    cursor: pointer;
   }
 
   .calc-grid {
