@@ -16,6 +16,7 @@ export const unaryOperations = {
   CBRT: "cbrt",
   INVERSE: "inverse",
   TEN_POWER_X: "tenPowerX",
+  FACTORIAL: "factorial",
 };
 
 export const binaryOperations = {

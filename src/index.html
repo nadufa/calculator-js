@@ -8,13 +8,18 @@
   </head>
 
   <body class="root">
+    <button data-theme-toggle class="themeButton">TH</button>
     <div class="calc-grid">
-      <div data-input class="calc-input"></div>
+      <div class="output">
+        <div data-output-memory class="calc-output-memory"></div>
+        <div data-output-display class="calc-output"></div>
+      </div>
 
       <button data-memory="clear">MC</button>
 
-      <button data-operation-unary="square">x&sup2;</button>
-      <button data-remove>&lt;=</button>
+      <button data-history="backward">&lt;&lt;</button>
+      <button data-history="forward">&gt;&gt;</button>
+
       <button data-clear>AC</button>
       <button data-operation-unary="negate">+/-</button>
       <button data-operation-binary="percent">%</button>
@@ -22,11 +27,9 @@
 
       <button data-memory="add">M+</button>
 
-      <button data-operation-unary="tenPowerX">
-        <var>10<sup>x</sup></var>
-      </button>
+      <button data-operation-unary="square">x&sup2;</button>
 
-      <button data-operation-unary="cube">x&sup3;</button>
+      <button data-operation-unary="sqrt">&radic;x</button>
 
       <button data-number>7</button>
       <button data-number>8</button>
@@ -35,11 +38,9 @@
 
       <button data-memory="subtract">M-</button>
 
-      <button data-operation-unary="inverse">1/x</button>
+      <button data-operation-unary="cube">x&sup3;</button>
 
-      <button data-operation-binary="power">
-        <var>x<sup>y</sup></var>
-      </button>
+      <button data-operation-unary="cbrt">&#x221B;x</button>
 
       <button data-number>4</button>
       <button data-number>5</button>
@@ -48,7 +49,9 @@
 
       <button data-memory="recall">MR</button>
 
-      <button data-operation-unary="sqrt">&radic;x</button>
+      <button data-operation-binary="power">
+        <var>x<sup>y</sup></var>
+      </button>
 
       <button data-operation-binary="nthRoot">
         <var><sup>x</sup>&radic;y</var>
@@ -59,16 +62,18 @@
       <button data-number>3</button>
       <button data-operation-binary="plus">+</button>
 
-      <button data-history="backward">&lt;&lt;</button>
-      <button data-history="forward">&gt;&gt;</button>
+      <button data-remove>&lt;=</button>
+      <button data-operation-unary="tenPowerX">
+        <var>10<sup>x</sup></var>
+      </button>
 
-      <button data-operation-unary="cbrt">&#x221B;x</button>
+      <button data-operation-unary="inverse">1/x</button>
 
+      <button data-operation-unary="factorial">!</button>
       <button data-number>0</button>
       <button data-floating-point>.</button>
-      <button data-equals>=</button>
 
-      <button data-theme-toggle>TH</button>
+      <button data-equals>=</button>
     </div>
   </body>
 </html>

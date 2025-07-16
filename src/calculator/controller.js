@@ -2,62 +2,65 @@ export class CalculatorControler {
   constructor(calculator, ui) {
     this.calculator = calculator;
     this.ui = ui;
-    this.render();
+    this.update();
   }
 
-  render() {
-    this.calculator.updateOutput();
+  update() {
+    const output = this.calculator.getOutput();
 
-    this.ui.update(this.calculator.state.output);
+    this.ui.render({
+      output,
+      memoryOutput: this.calculator.state.memory,
+    });
   }
 
   registerListeners() {
     this.ui.numbersButtons.forEach((button) => {
       button.addEventListener("click", () => {
         this.calculator.enterNumber(button.innerText);
-        this.render();
+        this.update();
       });
     });
 
     this.ui.floatingPointButton.addEventListener("click", () => {
       this.calculator.floatingPoint();
-      this.render();
+      this.update();
     });
 
     this.ui.unaryOperationsButtons.forEach((button) => {
       button.addEventListener("click", () => {
         this.calculator.doUnaryOperation(button.dataset.operationUnary);
-        this.render();
+        this.update();
       });
     });
 
     this.ui.binaryOperationsButtons.forEach((button) => {
       button.addEventListener("click", () => {
         this.calculator.setBinaryOperation(button.dataset.operationBinary);
-        this.render();
+        this.update();
       });
     });
 
     this.ui.memoryButtons.forEach((button) => {
       button.addEventListener("click", () => {
         this.calculator.doMemoryOperation(button.dataset.memory);
-        this.render();
+        this.update();
       });
     });
 
     this.ui.equalButton.addEventListener("click", () => {
       this.calculator.compute();
-      this.render();
+      this.update();
     });
 
     this.ui.allClearButton.addEventListener("click", () => {
       this.calculator.clearAll();
-      this.render();
+      this.update();
     });
 
     this.ui.removeButton.addEventListener("click", () => {
       this.calculator.remove();
-      this.render();
+      this.update();
     });
 
     this.ui.toggleButton.addEventListener("click", () => {
@@ -67,7 +70,7 @@ export class CalculatorControler {
     this.ui.historyButtons.forEach((button) => {
       button.addEventListener("click", () => {
         this.calculator.revisitHistory(button.dataset.history);
-        this.render();
+        this.update();
       });
     });
   }

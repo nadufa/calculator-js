@@ -21,22 +21,29 @@ export class MemoryAddOperation extends Operation {
     const { operation, memory } = state;
     const operandKey = getOperandKey(operation);
 
+    const result = state[operandKey]
+      ? (parseFloat(memory) + parseFloat(state[operandKey])).toString()
+      : memory;
+
     return {
       ...state,
-      memory: (parseFloat(memory) + parseFloat(state[operandKey])).toString(),
+      memory: result,
     };
   }
 }
 
 export class MemorySubtractOperation extends Operation {
   execute({ state }) {
-    const { operation } = state;
+    const { operation, memory } = state;
     const operandKey = getOperandKey(operation);
+
+    const result = state[operandKey]
+      ? (parseFloat(memory) - parseFloat(state[operandKey])).toString()
+      : memory;
+
     return {
       ...state,
-      memory: (
-        parseFloat(state.memory) - parseFloat(state[operandKey])
-      ).toString(),
+      memory: result,
     };
   }
 }

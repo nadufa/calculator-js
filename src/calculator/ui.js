@@ -12,12 +12,15 @@ export class CalculatorUI {
     this.equalButton = document.querySelector("[data-equals]");
     this.allClearButton = document.querySelector("[data-clear]");
     this.removeButton = document.querySelector("[data-remove]");
-    this.inputField = document.querySelector("[data-input]");
+    this.outputMemoryField = document.querySelector("[data-output-memory]");
+    this.outputField = document.querySelector("[data-output-display]");
     this.toggleButton = document.querySelector("[data-theme-toggle]");
+    this.factorialButton = document.querySelector("[data-factorial]");
     this.historyButtons = document.querySelectorAll("[data-history]");
   }
 
-  update(value) {
-    this.inputField.innerText = value;
+  render(data) {
+    this.outputMemoryField.innerText = "Memory: " + data.memoryOutput;
+    this.outputField.innerText = data.output;
   }
 }

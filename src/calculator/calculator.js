@@ -1,14 +1,16 @@
 import {
-  ChangeSignOperation,
   DivideOperation,
   EnterNumberOperation,
+  FactorialOperation,
   FloatingPointOperation,
   MinusOperation,
-  MultipleOperation,
+  MultiplyOperation,
+  NegateOperation,
   PercentOperation,
   PlusOperation,
   PowerOperation,
   RootOperation,
+  TenPowerXOperation,
 } from "./operations/math";
 
 import {
@@ -28,33 +30,33 @@ import {
 
 export class Calculator {
   constructor() {
-    this.history = [];
-    this.state = {
+    this.undoStack = [];
+    this.redoStack = [];
+    this.state = Object.freeze({
       operation: null,
-      leftOperand: "",
+      leftOperand: "0",
       rightOperand: "",
       output: "",
       memory: "0",
-      historyIndex: 0,
-    };
+    });
+    this.undoStack.push(this.state);
   }
 
   clearAll() {
-    this.state = {
-      ...this.state,
+    this.mutateState({
       operation: null,
-      leftOperand: "",
+      leftOperand: "0",
       rightOperand: "",
-    };
+    });
   }
 
   remove() {
     if (this.state.rightOperand) {
-      this.state.rightOperand = this.state.rightOperand.slice(0, -1);
+      this.mutateState({ rightOperand: this.state.rightOperand.slice(0, -1) });
     } else if (this.state.operation) {
-      this.state.operation = null;
+      this.mutateState({ operation: null });
     } else if (this.state.leftOperand) {
-      this.state.leftOperand = this.state.leftOperand.slice(0, -1);
+      this.mutateState({ leftOperand: this.state.leftOperand.slice(0, -1) });
     }
   }
 
@@ -90,7 +92,7 @@ export class Calculator {
     let operation, value;
     switch (operationValue) {
       case unaryOperations.NEGATE:
-        operation = new ChangeSignOperation();
+        operation = new NegateOperation();
         value = "";
         break;
       case unaryOperations.SQUARE:
@@ -102,7 +104,7 @@ export class Calculator {
         value = 3;
         break;
       case unaryOperations.TEN_POWER_X:
-        operation = new PowerOperation();
+        operation = new TenPowerXOperation();
         value = 10;
         break;
       case unaryOperations.INVERSE:
@@ -110,12 +112,16 @@ export class Calculator {
         value = -1;
         break;
       case unaryOperations.SQRT:
-        operation = new PowerOperation();
-        value = 1 / 2;
+        operation = new RootOperation();
+        value = 2;
         break;
       case unaryOperations.CBRT:
-        operation = new PowerOperation();
+        operation = new RootOperation();
         value = 1 / 3;
+        break;
+      case unaryOperations.FACTORIAL:
+        operation = new FactorialOperation();
+        value = "";
         break;
       default:
         return;
@@ -129,7 +135,6 @@ export class Calculator {
 
   doUnaryOperation(operation) {
     let operationData = this.getUnaryOperationData(operation);
-
     this.executeOperation(operationData.operation, operationData.value);
   }
 
@@ -140,7 +145,7 @@ export class Calculator {
       case binaryOperations.MINUS:
         return new MinusOperation(operationsChars.MINUS);
       case binaryOperations.MULTIPLY:
-        return new MultipleOperation(operationsChars.MULTIPLY);
+        return new MultiplyOperation(operationsChars.MULTIPLY);
       case binaryOperations.DIVIDE:
         return new DivideOperation(operationsChars.DIVIDE);
       case binaryOperations.PERCENT:
@@ -158,11 +163,10 @@ export class Calculator {
     if (this.state.rightOperand !== "") {
       this.compute();
     }
-    this.state.operation = this.getBinaryOperation(operationValue);
-  }
+    if (this.state.leftOperand !== "")
+      this.mutateState({ operation: this.getBinaryOperation(operationValue) });
 
-  executeOperation(operation, value) {
-    this.state = operation.execute({ state: this.state, value: value });
+    this.remember();
   }
 
   compute() {
@@ -173,61 +177,87 @@ export class Calculator {
       return;
     }
 
-    this.history.push(Object.freeze({ ...this.state }));
-    this.state.historyIndex += 1;
-    console.log(this.state.historyIndex);
-
     this.executeOperation(this.state.operation);
+    this.mutateState({ operation: null });
+  }
 
-    this.state.operation = null;
+  executeOperation(operation, value) {
+    const newState = operation.execute({ state: this.state, value: value });
+    this.mutateState(newState);
+    this.remember();
+    this.redoStack = [];
+  }
+
+  remember() {
+    console.log(this.state);
+
+    this.undoStack.push(this.state);
   }
 
   revisitHistory(operationValue) {
     switch (operationValue) {
       case historyOperations.FORWARD:
-        if (this.state.historyIndex < this.history.length - 1) {
-          this.state.historyIndex = this.state.historyIndex + 1;
+        if (this.redoStack.length) {
+          const newState = this.redoStack.pop();
+          this.undoStack.push(newState);
+          this.mutateState(newState);
         }
         break;
       case historyOperations.BACKWARD:
-        if (this.state.historyIndex > 0) {
-          this.state.historyIndex = this.state.historyIndex - 1;
+        if (this.undoStack.length > 1) {
+          const newState = this.undoStack.pop();
+          this.redoStack.push(newState);
+          this.mutateState(this.undoStack[this.undoStack.length - 1]);
         }
         break;
       default:
         break;
     }
-    this.state = { ...this.history[this.state.historyIndex] };
-    console.log(this.state);
   }
+
+  mutateState(data) {
+    this.state = Object.freeze({ ...this.state, ...data });
+  }
+
+  // getDisplayNumber(value) {
+  //   const stringNumber = value.toString();
+  //   const integerDigits = parseFloat(stringNumber.split(".")[0]);
+  //   const decimalDigits = stringNumber.split(".")[1];
+
+  //   let integerDisplay;
+  //   if (isNaN(integerDigits)) {
+  //     integerDisplay = "";
+  //   } else {
+  //     integerDisplay = integerDigits.toLocaleString("en", {
+  //       maximumFractionDigits: 0,
+  //     });
+  //   }
+
+  //   if (decimalDigits == null) {
+  //     return integerDisplay;
+  //   }
+
+  //   return `${integerDisplay}.${decimalDigits}`;
+  // }
 
   getDisplayNumber(value) {
     const stringNumber = value.toString();
-    const integerDigits = parseFloat(stringNumber.split(".")[0]);
-    const decimalDigits = stringNumber.split(".")[1];
+    const [integerPart, decimalPart] = stringNumber.split(".");
 
-    let integerDisplay;
-    if (isNaN(integerDigits)) {
-      integerDisplay = "";
-    } else {
-      integerDisplay = integerDigits.toLocaleString("en", {
-        maximumFractionDigits: 0,
-      });
-    }
+    // Add thousand separators to integer part manually
+    const integerDisplay = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
 
-    if (decimalDigits == null) {
-      return integerDisplay;
-    }
-
-    return `${integerDisplay}.${decimalDigits}`;
+    return decimalPart ? `${integerDisplay}.${decimalPart}` : integerDisplay;
   }
 
-  updateOutput() {
-    this.state.output =
-      this.getDisplayNumber(this.state.leftOperand || "") +
+  getOutput() {
+    // reversed output because of css "direction: rtl" property
+    return (
+      this.getDisplayNumber(this.state.rightOperand || "") +
       (this.state.operation == null
         ? ""
         : " " + this.state.operation.character + " ") +
-      this.getDisplayNumber(this.state.rightOperand || "");
+      this.getDisplayNumber(this.state.leftOperand || "")
+    );
   }
 }
