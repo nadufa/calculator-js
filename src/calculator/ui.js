@@ -21,8 +21,6 @@ export class CalculatorUI {
   }
 
   render(data) {
-    console.log(data);
-
     this.outputMemoryField.innerText = "Memory: " + data.memoryOutput;
     if (data.output.error) {
       this.outputField.innerText = data.output.error;

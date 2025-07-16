@@ -92,8 +92,6 @@ export class Calculator {
   }
 
   floatingPoint() {
-    console.log("fp");
-
     this.executeOperation(new FloatingPointOperation());
   }
 
@@ -194,7 +192,6 @@ export class Calculator {
         rightOperand: this.state.leftOperand,
       });
     }
-    console.log(this.state);
 
     this.remember();
   }
@@ -233,8 +230,6 @@ export class Calculator {
   }
 
   remember() {
-    console.log(this.state);
-
     this.undoStack.push(this.state);
   }
 
