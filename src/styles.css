@@ -2,24 +2,36 @@
   --background-color: #101726;
   --text-color: #ffffff;
   --button-color: #1b0925;
+  --number-button-color: #949494;
+  --primary-operation-color: #ff8da1;
+  --memory-button-color: #00b4d8;
+  --history-button-color: #cf9fff;
+  --clear-button-color: #d2042d;
   --button-border-color: #ffffff;
   --hover-color: rgba(255, 255, 255, 0.125);
   --active-color: rgba(255, 255, 255, 0.3);
   --output-background-color: rgba(255, 255, 255, 0.11);
   --output-border-color: #ffffff;
   --output-text-color: rgba(255, 255, 255, 0.75);
+  --theme-panel-background-color: rgba(255, 255, 255, 0.11);
 }
 
 .light-mode {
   --background-color: #f9efff;
   --text-color: #000000;
   --button-color: #fffaeb;
+  --number-button-color: #d9dddc;
+  --primary-operation-color: #ffa500;
+  --memory-button-color: #3bb143;
+  --history-button-color: #00b4d8;
+  --clear-button-color: #d2042d;
   --button-border-color: #000000;
   --hover-color: rgba(0, 0, 0, 0.125);
   --active-color: rgba(0, 0, 0, 0.3);
   --output-background-color: #ecf0ff;
   --output-border-color: #000000;
   --output-text-color: rgba(0, 0, 0, 0.75);
+  --theme-panel-background-color: #ecf0ff;
 }
 
 *,
@@ -37,6 +49,25 @@ body {
   color: var(--text-color);
   height: 100vh;
   position: relative;
+}
+
+.app {
+  display: flex;
+  flex-direction: row;
+  /* justify-content: space-between; */
+  height: 100vh;
+}
+
+.theme-panel {
+  width: 300px;
+  background-color: var(--theme-panel-background-color);
+}
+
+.calc {
+  flex-grow: 1;
+  height: 100vh;
+  width: 100%;
+  align-items: center;
 }
 
 .calc-grid {
@@ -84,6 +115,36 @@ body {
   font-size: 2rem;
 }
 
+.burger-button {
+  display: none;
+  font-size: 2.5rem;
+  background: none;
+  border: none;
+  color: var(--text-color);
+  cursor: pointer;
+  padding: 5px 15px;
+}
+
+.calc-grid > button.primary-operation-button {
+  background-color: var(--primary-operation-color);
+}
+
+.calc-grid > button.memory-button {
+  background-color: var(--memory-button-color);
+}
+
+.calc-grid > button.number-button {
+  background-color: var(--number-button-color);
+}
+
+.calc-grid > button.history-button {
+  background-color: var(--history-button-color);
+}
+
+.calc-grid > button.clear-button {
+  background-color: var(--clear-button-color);
+}
+
 .output {
   grid-column: span 7;
   background-color: var(--output-background-color);
@@ -122,5 +183,49 @@ body {
     align-content: center;
     grid-template-columns: repeat(7, 100px);
     grid-template-rows: minmax(120px, auto) repeat(5, 100px);
+  }
+}
+
+@media (max-width: 1020px) {
+  .app {
+    flex-direction: column;
+  }
+
+  .theme-panel {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    width: 250px;
+    background-color: var(--theme-panel-background-color);
+    transform: translateX(100%);
+    z-index: 1000;
+    overflow-y: auto;
+  }
+
+  .theme-panel.open {
+    transform: translateX(0);
+    visibility: visible;
+  }
+
+  .burger-button {
+    position: fixed;
+    top: 10px;
+    left: 10px;
+    z-index: 1500;
+    display: block;
+    background: none;
+    border: none;
+    font-size: 2.5rem;
+    color: var(--text-color);
+    cursor: pointer;
+  }
+
+  .calc-grid {
+    height: auto;
+  }
+
+  .calc {
+    margin-right: 0;
   }
 }

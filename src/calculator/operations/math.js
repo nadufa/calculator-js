@@ -1,4 +1,4 @@
-import { abs, getOperandKey } from "../utils.js";
+import { abs, getOperandKey, round } from "../utils.js";
 import { Operation } from "./base.js";
 
 export class FloatingPointOperation extends Operation {
@@ -23,24 +23,23 @@ export class FloatingPointOperation extends Operation {
 
 export class EnterNumberOperation extends Operation {
   execute({ state, value }) {
-    const { operation } = state;
-    const operandKey = getOperandKey(operation);
+    const { operation, reversedInput } = state;
+    const operandKey = getOperandKey(operation, reversedInput);
 
     const result = this.calculate(state[operandKey], value);
-    console.log(result);
 
     return { ...state, [operandKey]: String(result) };
   }
 
   calculate(previousValue, newValue) {
-    return previousValue + newValue;
+    return (previousValue === "0" ? "" : previousValue) + newValue;
   }
 }
 
 export class NegateOperation extends Operation {
   execute({ state }) {
-    const { operation } = state;
-    const operandKey = getOperandKey(operation);
+    const { operation, reversedInput } = state;
+    const operandKey = getOperandKey(operation, reversedInput);
 
     const result = this.calculate(parseFloat(state[operandKey]));
 
@@ -180,6 +179,9 @@ export class DivideOperation extends Operation {
   }
 
   calculate(left, right) {
+    if (right === 0) {
+      throw new Error("DivisionByZeroError");
+    }
     return left / right;
   }
 }
@@ -266,6 +268,6 @@ export class RootOperation extends Operation {
     power = possible ** power;
 
     if (abs(x - power) < 1 && x > 0 == power > 0)
-      return negate ? -possible : possible;
+      return round(negate ? -possible : possible, 10);
   }
 }

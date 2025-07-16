@@ -34,10 +34,12 @@ export class Calculator {
     this.redoStack = [];
     this.state = Object.freeze({
       operation: null,
+      reversedInput: false,
       leftOperand: "0",
       rightOperand: "",
       output: "",
       memory: "0",
+      error: "",
     });
     this.undoStack.push(this.state);
   }
@@ -45,8 +47,10 @@ export class Calculator {
   clearAll() {
     this.mutateState({
       operation: null,
+      reversedInput: false,
       leftOperand: "0",
       rightOperand: "",
+      error: "",
     });
   }
 
@@ -56,7 +60,8 @@ export class Calculator {
     } else if (this.state.operation) {
       this.mutateState({ operation: null });
     } else if (this.state.leftOperand) {
-      this.mutateState({ leftOperand: this.state.leftOperand.slice(0, -1) });
+      const mutatedValue = this.state.leftOperand.slice(0, -1) || "0";
+      this.mutateState({ leftOperand: mutatedValue });
     }
   }
 
@@ -117,7 +122,7 @@ export class Calculator {
         break;
       case unaryOperations.CBRT:
         operation = new RootOperation();
-        value = 1 / 3;
+        value = 3;
         break;
       case unaryOperations.FACTORIAL:
         operation = new FactorialOperation();
@@ -141,18 +146,25 @@ export class Calculator {
   getBinaryOperation(operationValue) {
     switch (operationValue) {
       case binaryOperations.PLUS:
+        this.mutateState({ reversedInput: false });
         return new PlusOperation(operationsChars.PLUS);
       case binaryOperations.MINUS:
+        this.mutateState({ reversedInput: false });
         return new MinusOperation(operationsChars.MINUS);
       case binaryOperations.MULTIPLY:
+        this.mutateState({ reversedInput: false });
         return new MultiplyOperation(operationsChars.MULTIPLY);
       case binaryOperations.DIVIDE:
+        this.mutateState({ reversedInput: false });
         return new DivideOperation(operationsChars.DIVIDE);
       case binaryOperations.PERCENT:
+        this.mutateState({ reversedInput: false });
         return new PercentOperation(operationsChars.PERCENT);
       case binaryOperations.POWER:
+        this.mutateState({ reversedInput: false });
         return new PowerOperation(operationsChars.POWER);
       case binaryOperations.NTH_ROOT:
+        this.mutateState({ reversedInput: true });
         return new RootOperation(operationsChars.ROOT);
       default:
         return;
@@ -160,11 +172,25 @@ export class Calculator {
   }
 
   setBinaryOperation(operationValue) {
-    if (this.state.rightOperand !== "") {
+    if (
+      (this.state.reversedInput && this.state.leftOperand !== "") ||
+      (!this.state.reversedInput && this.state.rightOperand !== "")
+    ) {
       this.compute();
     }
-    if (this.state.leftOperand !== "")
+    if (
+      (this.state.reversedInput && this.state.rightOperand !== "") ||
+      (!this.state.reversedInput && this.state.leftOperand !== "")
+    )
       this.mutateState({ operation: this.getBinaryOperation(operationValue) });
+
+    if (this.state.reversedInput) {
+      this.mutateState({
+        leftOperand: this.state.rightOperand,
+        rightOperand: this.state.leftOperand,
+      });
+    }
+    console.log(this.state);
 
     this.remember();
   }
@@ -178,14 +204,18 @@ export class Calculator {
     }
 
     this.executeOperation(this.state.operation);
-    this.mutateState({ operation: null });
+    this.mutateState({ operation: null, reversedInput: false });
   }
 
   executeOperation(operation, value) {
-    const newState = operation.execute({ state: this.state, value: value });
-    this.mutateState(newState);
-    this.remember();
-    this.redoStack = [];
+    try {
+      const newState = operation.execute({ state: this.state, value: value });
+      this.mutateState(newState);
+      this.remember();
+      this.redoStack = [];
+    } catch (e) {
+      this.mutateState({ error: e.message });
+    }
   }
 
   remember() {
@@ -219,28 +249,7 @@ export class Calculator {
     this.state = Object.freeze({ ...this.state, ...data });
   }
 
-  // getDisplayNumber(value) {
-  //   const stringNumber = value.toString();
-  //   const integerDigits = parseFloat(stringNumber.split(".")[0]);
-  //   const decimalDigits = stringNumber.split(".")[1];
-
-  //   let integerDisplay;
-  //   if (isNaN(integerDigits)) {
-  //     integerDisplay = "";
-  //   } else {
-  //     integerDisplay = integerDigits.toLocaleString("en", {
-  //       maximumFractionDigits: 0,
-  //     });
-  //   }
-
-  //   if (decimalDigits == null) {
-  //     return integerDisplay;
-  //   }
-
-  //   return `${integerDisplay}.${decimalDigits}`;
-  // }
-
-  getDisplayNumber(value) {
+  formatOutputValue(value) {
     const stringNumber = value.toString();
     const [integerPart, decimalPart] = stringNumber.split(".");
 
@@ -251,13 +260,27 @@ export class Calculator {
   }
 
   getOutput() {
-    // reversed output because of css "direction: rtl" property
+    if (this.state.error) {
+      return this.state.error;
+    }
+
+    const leftOperand =
+      parseFloat(this.state.leftOperand) < 0
+        ? String(-this.state.leftOperand) + "-"
+        : this.state.leftOperand;
+
+    const rightOperand =
+      parseFloat(this.state.rightOperand) < 0
+        ? String(-this.state.rightOperand) + "-"
+        : this.state.rightOperand;
+
+    // reverse operand order because of css "direction: rtl" property
     return (
-      this.getDisplayNumber(this.state.rightOperand || "") +
+      this.formatOutputValue(rightOperand || "") +
       (this.state.operation == null
         ? ""
         : " " + this.state.operation.character + " ") +
-      this.getDisplayNumber(this.state.leftOperand || "")
+      this.formatOutputValue(leftOperand || "")
     );
   }
 }

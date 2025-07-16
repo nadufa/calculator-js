@@ -17,6 +17,8 @@ export class CalculatorUI {
     this.toggleButton = document.querySelector("[data-theme-toggle]");
     this.factorialButton = document.querySelector("[data-factorial]");
     this.historyButtons = document.querySelectorAll("[data-history]");
+    this.burgerButton = document.querySelector(".burger-button");
+    this.themePanel = document.querySelector(".theme-panel");
   }
 
   render(data) {

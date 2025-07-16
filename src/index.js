@@ -7,4 +7,7 @@ import "./styles.css";
 const ui = new CalculatorUI();
 const calculator = new Calculator();
 const controller = new CalculatorControler(calculator, ui);
-controller.registerListeners();
+
+document.addEventListener("DOMContentLoaded", () => {
+  controller.registerListeners();
+});
