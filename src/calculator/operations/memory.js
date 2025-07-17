@@ -1,4 +1,4 @@
-import { getOperandKey } from "../utils";
+import { getMultiplierForInteger, getOperandKey } from "../utils";
 import { Operation } from "./base";
 
 export class MemoryRecallOperation extends Operation {
@@ -22,13 +22,25 @@ export class MemoryAddOperation extends Operation {
     const operandKey = getOperandKey(operation);
 
     const result = state[operandKey]
-      ? (parseFloat(memory) + parseFloat(state[operandKey])).toString()
+      ? this.calculate(
+          parseFloat(memory),
+          parseFloat(state[operandKey])
+        ).toString()
       : memory;
 
     return {
       ...state,
       memory: result,
+      [operandKey]: "",
     };
+  }
+
+  calculate(operand, value) {
+    const multiplierForInteger = getMultiplierForInteger([operand, value]);
+    return (
+      (operand * multiplierForInteger + value * multiplierForInteger) /
+      multiplierForInteger
+    );
   }
 }
 
@@ -38,12 +50,24 @@ export class MemorySubtractOperation extends Operation {
     const operandKey = getOperandKey(operation);
 
     const result = state[operandKey]
-      ? (parseFloat(memory) - parseFloat(state[operandKey])).toString()
+      ? this.calculate(
+          parseFloat(memory),
+          parseFloat(state[operandKey])
+        ).toString()
       : memory;
 
     return {
       ...state,
       memory: result,
+      [operandKey]: "",
     };
+  }
+
+  calculate(operand, value) {
+    const multiplierForInteger = getMultiplierForInteger([operand, value]);
+    return (
+      (operand * multiplierForInteger - value * multiplierForInteger) /
+      multiplierForInteger
+    );
   }
 }

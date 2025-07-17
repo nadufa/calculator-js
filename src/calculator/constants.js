@@ -17,6 +17,7 @@ export const unaryOperations = {
   INVERSE: "inverse",
   TEN_POWER_X: "tenPowerX",
   FACTORIAL: "factorial",
+  PERCENT: "percent",
 };
 
 export const binaryOperations = {
@@ -26,7 +27,6 @@ export const binaryOperations = {
   DIVIDE: "divide",
   POWER: "power",
   NTH_ROOT: "nthRoot",
-  PERCENT: "percent",
 };
 
 export const memoryOperations = {
@@ -40,3 +40,5 @@ export const historyOperations = {
   FORWARD: "forward",
   BACKWARD: "backward",
 };
+
+export const numbersUnitRegex = /\B(?=(\d{3})+(?!\d))/g;

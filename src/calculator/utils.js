@@ -22,3 +22,12 @@ export function round(value, decimals) {
 export function isFloat(value) {
   return value % 1 !== 0;
 }
+
+export function getMultiplierForInteger(operands) {
+  return (
+    10 **
+    operands
+      .map((el) => String(el).split(".")[1]?.length ?? 0)
+      .sort((a, b) => a + b)[0]
+  );
+}

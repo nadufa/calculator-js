@@ -31,7 +31,6 @@ module.exports = {
     new HtmlWebpackPlugin({
       template: "./src/index.html",
       filename: "index.html",
-      // Убедитесь, что в вашем HTML шаблоне не присутствует <link> тег для стилей
     }),
     new ESLintPlugin({
       context: path.resolve(__dirname, "src"),
@@ -39,9 +38,9 @@ module.exports = {
       overrideConfigFile: path.resolve(__dirname, ".eslintrc.js"),
     }),
     new MiniCssExtractPlugin({
-      filename: "styles.css", // Временный файл, который будет инлайнится
+      filename: "styles.css",
     }),
-    new HtmlInlineCssWebpackPlugin(), // Инлайнит CSS в HTML
+    new HtmlInlineCssWebpackPlugin(),
   ],
   mode: "development",
   devServer: {

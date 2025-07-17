@@ -1,5 +1,10 @@
-import { DivisionByZeroError } from "../errors.js";
-import { abs, getOperandKey, round } from "../utils.js";
+import { DivisionByZeroError, RootOfNegativeError } from "../errors.js";
+import {
+  abs,
+  getMultiplierForInteger,
+  getOperandKey,
+  round,
+} from "../utils.js";
 import { Operation } from "./base.js";
 
 export class FloatingPointOperation extends Operation {
@@ -18,7 +23,7 @@ export class FloatingPointOperation extends Operation {
   }
 
   calculate(value) {
-    return value + ".";
+    return (value ? value : "0") + ".";
   }
 }
 
@@ -42,6 +47,9 @@ export class NegateOperation extends Operation {
     const { operation, reversedInput } = state;
     const operandKey = getOperandKey(operation, reversedInput);
 
+    if (state[operandKey] === "") {
+      return state;
+    }
     const result = this.calculate(parseFloat(state[operandKey]));
 
     return {
@@ -59,6 +67,10 @@ export class FactorialOperation extends Operation {
   execute({ state }) {
     const { operation } = state;
     const operandKey = getOperandKey(operation);
+
+    if (state[operandKey] === "") {
+      return state;
+    }
 
     const result = this.calculate(parseFloat(state[operandKey]));
 
@@ -84,6 +96,10 @@ export class TenPowerXOperation extends Operation {
   execute({ state }) {
     const { operation } = state;
     const operandKey = getOperandKey(operation);
+
+    if (state[operandKey] === "") {
+      return state;
+    }
 
     const result = this.calculate(parseFloat(state[operandKey]));
 
@@ -115,7 +131,11 @@ export class PlusOperation extends Operation {
   }
 
   calculate(left, right) {
-    return left + right;
+    const multiplierForInteger = getMultiplierForInteger([left, right]);
+    return (
+      (left * multiplierForInteger + right * multiplierForInteger) /
+      multiplierForInteger
+    );
   }
 }
 
@@ -137,7 +157,11 @@ export class MinusOperation extends Operation {
   }
 
   calculate(left, right) {
-    return left - right;
+    const multiplierForInteger = getMultiplierForInteger([left, right]);
+    return (
+      (left * multiplierForInteger - right * multiplierForInteger) /
+      multiplierForInteger
+    );
   }
 }
 
@@ -158,7 +182,9 @@ export class MultiplyOperation extends Operation {
   }
 
   calculate(left, right) {
-    return left * right;
+    const multiplierForInteger = getMultiplierForInteger([left, right]);
+
+    return (left * multiplierForInteger * right) / multiplierForInteger;
   }
 }
 
@@ -183,29 +209,54 @@ export class DivideOperation extends Operation {
     if (right === 0) {
       throw new DivisionByZeroError();
     }
-    return left / right;
+    const multiplierForInteger = getMultiplierForInteger([left, right]);
+    return (left * multiplierForInteger) / (right * multiplierForInteger);
   }
 }
 
 export class PercentOperation extends Operation {
   execute({ state }) {
-    const { leftOperand, rightOperand } = state;
+    const { operation } = state;
+    const operandKey = getOperandKey(operation);
 
-    const result = this.calculate(
-      parseFloat(leftOperand),
-      parseFloat(rightOperand)
-    );
+    if (state[operandKey] === "") {
+      return state;
+    }
+
+    const result = this.calculate(parseFloat(state[operandKey]));
 
     return {
       ...state,
-      leftOperand: String(result),
-      rightOperand: "",
-      operation: "",
+      [operandKey]: String(result),
     };
   }
 
-  calculate(x, percent) {
-    return (x * percent) / 100;
+  calculate(x) {
+    const multiplierForInteger = getMultiplierForInteger([x]);
+    return (x * multiplierForInteger) / (100 * multiplierForInteger);
+  }
+}
+
+export class InverseOperation extends Operation {
+  execute({ state }) {
+    const { operation } = state;
+    const operandKey = getOperandKey(operation);
+
+    if (state[operandKey] === "") {
+      return state;
+    }
+
+    const result = this.calculate(parseFloat(state[operandKey]));
+
+    return {
+      ...state,
+      [operandKey]: String(result),
+    };
+  }
+
+  calculate(x) {
+    if (x === 0) throw new DivisionByZeroError();
+    return 1 / x;
   }
 }
 
@@ -213,6 +264,11 @@ export class PowerOperation extends Operation {
   execute({ state, value }) {
     const { leftOperand, rightOperand, operation } = state;
     const operandKey = getOperandKey(operation);
+
+    if (state[operandKey] === "" && value) {
+      return state;
+    }
+
     const x = value ? state[operandKey] : parseFloat(leftOperand);
     const power = value || parseFloat(rightOperand);
 
@@ -231,7 +287,9 @@ export class PowerOperation extends Operation {
   }
 
   calculate(x, power) {
-    return x ** power;
+    const multiplierForInteger = getMultiplierForInteger([x]);
+
+    return (x * multiplierForInteger) ** power / multiplierForInteger ** power;
   }
 }
 
@@ -242,8 +300,12 @@ export class RootOperation extends Operation {
     const power = value || parseFloat(leftOperand);
     const x = value ? state[operandKey] : parseFloat(rightOperand);
 
+    if (state[operandKey] === "" && value) {
+      return state;
+    }
+
     if (x < 0 && power % 2 === 0) {
-      throw new Error("Cannot calculate even root of a negative number.");
+      throw new RootOfNegativeError();
     }
 
     const result = this.calculate(x, power);
