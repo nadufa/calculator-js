@@ -9,8 +9,8 @@ import { Operation } from "./base.js";
 
 export class FloatingPointOperation extends Operation {
   execute({ state }) {
-    const { operation } = state;
-    const operandKey = getOperandKey(operation);
+    const { operation, reversedInput } = state;
+    const operandKey = getOperandKey(operation, reversedInput);
     let operand = state[operandKey] || "";
 
     if (operand.includes(".")) {
@@ -46,10 +46,6 @@ export class NegateOperation extends Operation {
   execute({ state }) {
     const { operation, reversedInput } = state;
     const operandKey = getOperandKey(operation, reversedInput);
-
-    if (state[operandKey] === "") {
-      return state;
-    }
     const result = this.calculate(parseFloat(state[operandKey]));
 
     return {
@@ -67,11 +63,6 @@ export class FactorialOperation extends Operation {
   execute({ state }) {
     const { operation } = state;
     const operandKey = getOperandKey(operation);
-
-    if (state[operandKey] === "") {
-      return state;
-    }
-
     const result = this.calculate(parseFloat(state[operandKey]));
 
     return {
@@ -96,11 +87,6 @@ export class TenPowerXOperation extends Operation {
   execute({ state }) {
     const { operation } = state;
     const operandKey = getOperandKey(operation);
-
-    if (state[operandKey] === "") {
-      return state;
-    }
-
     const result = this.calculate(parseFloat(state[operandKey]));
 
     return {
@@ -119,7 +105,6 @@ export class PlusOperation extends Operation {
     const { leftOperand, rightOperand } = state;
     const left = parseFloat(leftOperand);
     const right = parseFloat(rightOperand);
-
     const result = this.calculate(left, right);
 
     return {
@@ -142,7 +127,6 @@ export class PlusOperation extends Operation {
 export class MinusOperation extends Operation {
   execute({ state }) {
     const { leftOperand, rightOperand } = state;
-
     const result = this.calculate(
       parseFloat(leftOperand),
       parseFloat(rightOperand)
@@ -168,7 +152,6 @@ export class MinusOperation extends Operation {
 export class MultiplyOperation extends Operation {
   execute({ state }) {
     const { leftOperand, rightOperand } = state;
-
     const result = this.calculate(
       parseFloat(leftOperand),
       parseFloat(rightOperand)
@@ -183,7 +166,6 @@ export class MultiplyOperation extends Operation {
 
   calculate(left, right) {
     const multiplierForInteger = getMultiplierForInteger([left, right]);
-
     return (left * multiplierForInteger * right) / multiplierForInteger;
   }
 }
@@ -191,7 +173,6 @@ export class MultiplyOperation extends Operation {
 export class DivideOperation extends Operation {
   execute({ state }) {
     const { leftOperand, rightOperand } = state;
-
     const result = this.calculate(
       parseFloat(leftOperand),
       parseFloat(rightOperand)
@@ -218,11 +199,6 @@ export class PercentOperation extends Operation {
   execute({ state }) {
     const { operation } = state;
     const operandKey = getOperandKey(operation);
-
-    if (state[operandKey] === "") {
-      return state;
-    }
-
     const result = this.calculate(parseFloat(state[operandKey]));
 
     return {
@@ -241,11 +217,6 @@ export class InverseOperation extends Operation {
   execute({ state }) {
     const { operation } = state;
     const operandKey = getOperandKey(operation);
-
-    if (state[operandKey] === "") {
-      return state;
-    }
-
     const result = this.calculate(parseFloat(state[operandKey]));
 
     return {
@@ -264,11 +235,6 @@ export class PowerOperation extends Operation {
   execute({ state, value }) {
     const { leftOperand, rightOperand, operation } = state;
     const operandKey = getOperandKey(operation);
-
-    if (state[operandKey] === "" && value) {
-      return state;
-    }
-
     const x = value ? state[operandKey] : parseFloat(leftOperand);
     const power = value || parseFloat(rightOperand);
 
@@ -299,10 +265,6 @@ export class RootOperation extends Operation {
     const operandKey = getOperandKey(operation);
     const power = value || parseFloat(leftOperand);
     const x = value ? state[operandKey] : parseFloat(rightOperand);
-
-    if (state[operandKey] === "" && value) {
-      return state;
-    }
 
     if (x < 0 && power % 2 === 0) {
       throw new RootOfNegativeError();

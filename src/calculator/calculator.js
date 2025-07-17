@@ -10,6 +10,8 @@ import { getBinaryOperationData } from "./factories/binaryOperationFactory";
 import { getMemoryOperationData } from "./factories/memoryOperationFactory";
 import { getUnaryOperationData } from "./factories/unaryOperationFactory";
 
+import { getOperandKey } from "./utils";
+
 export class Calculator {
   constructor() {
     this.undoStack = [];
@@ -37,13 +39,24 @@ export class Calculator {
   }
 
   remove() {
-    if (this.state.rightOperand) {
-      this.mutateState({ rightOperand: this.state.rightOperand.slice(0, -1) });
+    const operandKey = getOperandKey(
+      this.state.operation,
+      this.state.reversedInput
+    );
+
+    if (this.state[operandKey]) {
+      this.mutateState({ [operandKey]: this.state[operandKey].slice(0, -1) });
     } else if (this.state.operation) {
-      this.mutateState({ operation: null });
+      this.mutateState({
+        operation: null,
+        reversedInput: false,
+        leftOperand: this.state.rightOperand,
+        rightOperand: "",
+      });
     } else if (this.state.leftOperand) {
       this.mutateState({ leftOperand: this.state.leftOperand.slice(0, -1) });
     }
+
     this.remember();
   }
 
@@ -61,8 +74,12 @@ export class Calculator {
   }
 
   doUnaryOperation(operationValue) {
-    let operationData = getUnaryOperationData(operationValue);
-    this.executeOperation(operationData.operation, operationData.value);
+    if (
+      this.state[getOperandKey(this.state.operation, this.state.reversedInput)]
+    ) {
+      let operationData = getUnaryOperationData(operationValue);
+      this.executeOperation(operationData.operation, operationData.value);
+    }
   }
 
   setBinaryOperation(operationValue) {
@@ -168,7 +185,9 @@ export class Calculator {
   getOutput() {
     return {
       text:
-        this.formatOutputValue(this.state.leftOperand || "0") +
+        this.formatOutputValue(
+          this.state.leftOperand || (this.state.reversedInput ? "" : "0")
+        ) +
         (this.state.operation == null
           ? ""
           : " " + this.state.operation.character + " ") +
